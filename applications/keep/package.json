@@ -1,0 +1,7 @@
+{
+  "name": "lingcore-generated-app",
+  "private": true,
+  "scripts": {
+    "start": "node backend/server.cjs"
+  }
+}

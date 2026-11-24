@@ -1,0 +1,29 @@
+# Dependencies and generated bundles must be built on the student's machine.
+node_modules/
+dist/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Runtime state and local verification output.
+.data/
+**/backend/data/
+**/backend/state.json
+**/backend/state.json.*.tmp
+.local-runtime/
+*.log
+test-results/
+playwright-report/
+
+# Generator traces and private development tooling are not course inputs.
+.arc/
+.pizzza/
+.lingcore/
+.arc_adapter/
+.arc_requirements/
+.DS_Store
+Thumbs.db
