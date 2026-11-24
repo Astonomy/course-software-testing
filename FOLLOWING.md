@@ -6,23 +6,19 @@ Open PowerShell and run:
 
 ```powershell
 cd applications\bookstack
+npm.cmd ci --include=dev --include=optional
 .\start.bat --port auto
 ```
 
-The launcher checks dependencies, builds the application, and automatically selects an available port. Look for an output similar to:
+The dependency installation may take a few minutes. When it finishes, `start.bat` checks the application and automatically selects an available port. Look for a message similar to:
 
 ```text
 Starting BookStack at http://127.0.0.1:3000
 ```
 
-Open the actual URL printed in the terminal. The port is not necessarily 3000. Keep this terminal running throughout the demonstration.
+Open the **exact URL printed in the terminal** in your browser. The port may not be `3000`. Keep the PowerShell window open while you use BookStack.
 
-If npm dependencies are missing, install them manually and restart the application:
-
-```powershell
-npm.cmd ci --include=dev --include=optional
-.\start.bat --port auto
-```
+If the application reports that dependencies are missing, run the installation command again, then restart BookStack with `.\start.bat --port auto`.
 
 ## 2. Log In and Create the First Book
 
@@ -30,66 +26,67 @@ npm.cmd ci --include=dev --include=optional
 2. Enter the following credentials:
    - Email: `bookstack_user@example.com`
    - Password: `Password123!`
-3. Click **Login** on the login form.
-4. Navigate to **Books → Create New Book** using the top navigation bar.
-5. Enter the following values exactly as specified. The same values will be used when creating the second book later.
+3. Leave **Remember Me** at its default setting; it does not affect this demonstration.
+4. Click **Login** on the login form.
+5. From the top navigation bar, go to **Books → Create New Book**.
+6. Enter these values:
 
    | Field | Value |
-   | --- | --- |
+   |---|---|
    | Name | Course |
    | Description | Testing |
    | Tags | testing |
 
-6. Click **Save Book**.
-7. Record the URL of the book details page.
+7. Click **Save Book**.
+8. Copy the full URL from your browser’s address bar and save it in a note as **First book URL**. It may look like `http://127.0.0.1:3000/books/1`; the port and number may differ on your computer.
 
-At this point, the book has been viewed, and the **Favorite** button should appear on the right-hand side.
+The book details page should show a **Favorite** button on the right-hand side.
 
-## 3. Black-Box Testing: A Favorited Book Disappears from Recently Viewed
+## 3. Black-Box Test: A Favorited Book Disappears from Recently Viewed
 
-| Step | Action | Actual Observation |
-| --- | --- | --- |
-| 1 | Click **BookStack Demo** in the top navigation bar to return to the home page. | Course Handbook appears in **My Recently Viewed**. |
-| 2 | Click the entry to open the book details page. | The book opens normally. |
+For this test, observe the behavior through the BookStack interface. Do not inspect the source code yet.
+
+| Step | Action | What to observe |
+|---|---|---|
+| 1 | Click **BookStack Demo** in the top navigation bar to return to the home page. | The **Course** book appears in **My Recently Viewed**. |
+| 2 | Click **Course** in **My Recently Viewed**. | The book details page opens normally. |
 | 3 | Click **Favorite** on the right-hand side. | The button changes to **Unfavorite**. |
-| 4 | Return to the home page and press F5 to refresh. | The book disappears from **My Recently Viewed** but appears in **My Most Viewed Favorites**. |
-| 5 | Open the book from the favorites section and click **Unfavorite**. | The book is successfully removed from favorites. |
-| 6 | Return to the home page and press F5 to refresh. | The book reappears in **My Recently Viewed**. |
+| 4 | Return to the home page. If the sections have not updated, press **F5** or click the browser’s refresh button. | Check **My Recently Viewed**. The book may disappear from there and appear in **My Most Viewed Favorites**. |
+| 5 | Open the book from the favorites section and click **Unfavorite**. | The button changes back to **Favorite**. |
+| 6 | Return to the home page. Refresh if needed. | The book reappears in **My Recently Viewed**. |
 
-**Expected Behavior:** Adding or removing a book from favorites should not remove it from the recently viewed history.
+**Expected behavior:** Favoriting or unfavoriting a book should not remove it from recently viewed history.
 
-**Fault Evidence:** The number of entries corresponding to the same book in the recently viewed section changes from **1 → 0 → 1**.
+**Fault evidence:** The number of entries for the same book in **My Recently Viewed** changes from **1 → 0 → 1**.
 
-When observing the results, focus specifically on the **My Recently Viewed** section. The book's presence in the favorites section does not indicate that the recently viewed functionality is working correctly.
+When observing the result, focus on **My Recently Viewed**. Seeing the book under favorites does not show that recently viewed history is working correctly.
 
-## 4. Prepare for the White-Box Testing Demo
+## 4. Prepare for the White-Box Test
 
-Add the first book back to favorites:
-
-1. Open **Course Handbook**.
+1. Open the **Course** book.
 2. Click **Favorite**.
-3. Confirm that the button changes to **Unfavorite**.
-4. Record its details page URL again as the URL of the first book.
+3. Confirm the button changes to **Unfavorite**.
+4. Copy the full URL from the browser’s address bar again and save it as **First book URL**. This is the URL you will compare with the second creation.
 
-This preparation provides supporting evidence for the later identity check. Do not execute the second creation yet. First inspect the source code and design the test inputs in Section 5.
+**Do not create the second book yet.** First inspect the source code and decide what result you expect.
 
-Reading code to explain the first observed failure is debugging; it does not reclassify the original black-box test. The next test is white-box because its inputs are derived from an internal branch before execution.
+Reading the code now does not change the black-box nature of the first test. The next test is a white-box test because you will use information from the source code to choose its inputs before running it.
 
-## 5. Design the White-Box Test from the Source Code
+## 5. Your Task: Design the White-Box Test
 
-Open the following file in your code editor:
+Open this file in your code editor:
 
 ```text
 applications/bookstack/backend/src/slices/bookstack.ts
 ```
 
-Locate the following statement:
+Find the statement below. In the supplied version, it is on line 113. It is an **early-return branch**: if `existing` is true, the function returns that book immediately instead of continuing to create a book.
 
 ```typescript
 if (existing) return existing;
 ```
 
-The preceding database query compares the book's name, description, tags, and associated shelf:
+Inspect the database query immediately before that statement:
 
 ```typescript
 const existing = db.prepare(
@@ -101,43 +98,50 @@ const existing = db.prepare(
 if (existing) return existing;
 ```
 
-Before running the second creation, derive inputs that enter the early-return branch: match the name, description, tags, and shelf. Matching the name alone is not sufficient. Create both books from the global Books page so both shelf values are null.
+The query looks for a book with the same **name**, **description**, **tags**, and **shelf**. Matching the name alone is not enough. Creating both books from the global **Books** page means neither book is assigned to a shelf, so both shelf values will be null.
 
-Write the expected result before execution: two independent creation actions should return different book IDs. The source code guides input selection; the requirements and reference behavior determine the expected result. Now execute the steps in the next section.
+This is a manual test: you will use the interface to enter the values and observe the result. You will not write or change code.
 
-**Code-guided hypothesis:** With matching metadata, this branch may return the old object instead of creating a distinct book. The next section tests that hypothesis.
+Before creating the second book, write down your prediction:
 
-**Question to ask after execution:**
+> **Expected behavior:** Two independent book creation operations should create two distinct book objects with different book IDs, even when all their field values are identical.
 
-> Why is the second book already marked as a favorite? Is the favorite state incorrectly shared between two books, or was the second book never created in the first place?
+The code gives you a hypothesis about what may happen. The expected behavior comes from the requirement that each separate creation operation should create a distinct book. Keep your expected result written down so you can compare it with what happens.
 
-## 6. Execute the White-Box Test: Creating a Second Book Reuses the First Book
+## 6. Execute the White-Box Test: Create a Second Book
 
 1. Click **Books** in the top navigation bar.
-2. Click **Create New Book**. Make sure to open a new creation form rather than editing the existing book.
-3. Enter exactly the same values as before:
+2. Click **Create New Book** to open a new creation form. Do not edit the existing book.
+3. Enter the same values as before:
 
    | Field | Value |
-   | --- | --- |
+   |---|---|
    | Name | Course |
    | Description | Testing |
    | Tags | testing |
 
 4. Click **Save Book**.
-5. Inspect the browser's address bar and the favorite button.
+5. Compare the full URL in the browser’s address bar with the saved **First book URL**. Check the favorite button as well.
+6. Return to **Books** and check how many **Course** entries appear.
 
-**Actual Observations:**
+**Actual observations:**
 
-- The URL is identical to that of the first book.
-- The newly created book already displays **Unfavorite**.
-- Returning to **Books** reveals only one Course Handbook entry.
+- The URL is identical to the **First book URL**.
+- The page displays **Unfavorite**, even though you just completed a new creation operation.
+- The Books page shows only one **Course** entry.
 
-**Expected Behavior:** Two independent book creation operations should create two distinct book objects, even if their field values are identical.
+Discuss these questions:
 
-**Fault Evidence:** Two independent creation operations result in only one book object.
+- Why is the second book already marked as a favorite?
+- Was favorite state shared between two books, or was a second book never created?
+- How do the URL and the number of entries help you decide?
 
-Note that this is neither a double-click on the Save button nor a network retry. The two operations involve opening separate creation forms, entering the values, and saving each book independently.
+**Fault evidence:** Two independent creation operations resulted in only one book object, rather than two distinct books.
+
+This was not a double-click on **Save Book** or a network retry. You opened a separate creation form, entered the values, and saved it as a second operation.
+
+Compare the actual observations with your written prediction. The matching URL, existing favorite state, and single **Course** entry are consistent with the code-guided hypothesis that the early-return branch returned the existing book.
 
 ## 7. End the Demonstration
 
-Return to the PowerShell terminal running the application and press Ctrl+C to stop it.
+Return to the PowerShell window running BookStack and press **Ctrl+C** to stop the application.
