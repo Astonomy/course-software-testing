@@ -1,0 +1,10 @@
+title: "ARC-Bench: Web Application"
+description: >-
+  Build and evaluate web applications across six ARC-Bench tasks. A complete
+  leaderboard score is calculated only when one submission has a completed run
+  for every task in this competition.
+template_required: false
+template_source_competition_id: null
+starts_at: 2026-09-10
+ends_at: 2036-09-10
+status: open

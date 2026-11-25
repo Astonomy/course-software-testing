@@ -193,8 +193,14 @@ export function registerBookStack(app: Express, db: Db): void {
       ).all(user.id, type) as any[];
       for (const row of rows) allViewed.push({ type, id: row.id, name: row.name, viewed_at: row.viewed_at });
     }
+    console.log("[BookStack white-box][1] Collected viewing records", JSON.stringify({
+      userId: user.id, count: allViewed.length, allViewed,
+    }, null, 2));
     allViewed.sort((a, b) => (b.viewed_at ?? 0) - (a.viewed_at ?? 0));
     const recentlyViewed = allViewed.slice(0, 10);
+    console.log("[BookStack white-box][2] Sorted and limited viewing records", JSON.stringify({
+      count: recentlyViewed.length, recentlyViewed,
+    }, null, 2));
 
     const favorites: Named[] = [];
     for (const type of ["shelf", "book", "chapter", "page"] as ItemType[]) {
@@ -205,10 +211,22 @@ export function registerBookStack(app: Express, db: Db): void {
         if (name) favorites.push({ type, id: row.item_id, name, created_at: row.created_at });
       }
     }
+    console.log("[BookStack white-box][3] Collected favorites", JSON.stringify({
+      count: favorites.length, favorites,
+    }, null, 2));
     favorites.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
     const favoriteTop = favorites.slice(0, 4);
     const favoriteKeys = new Set(favoriteTop.map((item) => `${item.type}:${item.id}`));
+    console.log("[BookStack white-box][4] Selected homepage favorites", JSON.stringify({
+      favoriteTop, favoriteKeys: [...favoriteKeys],
+    }, null, 2));
     const recentWithoutFavoriteDuplicates = recentlyViewed.filter((item) => !favoriteKeys.has(`${item.type}:${item.id}`));
+    console.log("[BookStack white-box][5] Filtered recently viewed records", JSON.stringify({
+      beforeCount: recentlyViewed.length,
+      afterCount: recentWithoutFavoriteDuplicates.length,
+      recentWithoutFavoriteDuplicates,
+      removedItems: recentlyViewed.filter((item) => favoriteKeys.has(`${item.type}:${item.id}`)),
+    }, null, 2));
 
     response.json({
       user: publicUser(user),

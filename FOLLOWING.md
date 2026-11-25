@@ -1,8 +1,8 @@
-# BookStack: Black-Box and White-Box Testing Demo Guide for TAs
+# BookStack: Black-Box and White-Box Testing Demo Guide for TAs (Version 2)
 
 ## 1. Start BookStack
 
-Open PowerShell and run:
+Open PowerShell at the repository root and run:
 
 ```powershell
 cd applications\bookstack
@@ -10,138 +10,176 @@ npm.cmd ci --include=dev --include=optional
 .\start.bat --port auto
 ```
 
-The dependency installation may take a few minutes. When it finishes, `start.bat` checks the application and automatically selects an available port. Look for a message similar to:
+Dependency installation may take a few minutes. Open the **exact URL printed in the terminal**. The port may not be `3000`. Keep the PowerShell window open throughout the demonstration.
 
-```text
-Starting BookStack at http://127.0.0.1:3000
-```
+## 2. Log In and Prepare Ten Books
 
-Open the **exact URL printed in the terminal** in your browser. The port may not be `3000`. Keep the PowerShell window open while you use BookStack.
-
-If the application reports that dependencies are missing, run the installation command again, then restart BookStack with `.\start.bat --port auto`.
-
-## 2. Log In and Create the First Book
+Use a fresh application instance with no existing viewing or favorite history for the supplied account. Stay logged in for all subsequent steps.
 
 1. Click **Login** in the upper-right corner.
-2. Enter the following credentials:
-   - Email: `bookstack_user@example.com`
-   - Password: `Password123!`
-3. Leave **Remember Me** at its default setting; it does not affect this demonstration.
-4. Click **Login** on the login form.
-5. From the top navigation bar, go to **Books → Create New Book**.
-6. Enter these values:
+2. Enter Email `bookstack_user@example.com` and Password `Password123!`.
+3. Leave **Remember Me** at its default and click **Login** on the form.
+4. Choose a unique suffix for this run, such as `1125-01`.
+5. Go to **Books → Create New Book**, enter the values below, and click **Save Book**. Repeat with a different name until all ten books have been created:
 
    | Field | Value |
    |---|---|
-   | Name | Course |
-   | Description | Testing |
-   | Tags | testing |
+   | Name | `Initial-01-1125-01` through `Initial-10-1125-01` |
+   | Description | `Initial viewing record` |
+   | Tags | `testing` |
 
-7. Click **Save Book**.
-8. Copy the full URL from your browser’s address bar and save it in a note as **First book URL**. It may look like `http://127.0.0.1:3000/books/1`; the port and number may differ on your computer.
+6. Each save opens the new book's details and records a visit. After the tenth save, click **BookStack Demo** to return home.
+7. Refresh if needed. Confirm that **My Recently Viewed** contains ten entries.
 
-The book details page should show a **Favorite** button on the right-hand side.
+Do not favorite any books yet. The local database is excluded from Git; prepare these records again after a fresh clone.
 
-## 3. Black-Box Test: A Favorited Book Disappears from Recently Viewed
+## 3. Black-Box Test: Create Books with Different Descriptions
 
-For this test, observe the behavior through the BookStack interface. Do not inspect the source code yet.
+Observe the application through its interface. **Do not inspect the implementation yet.**
 
-| Step | Action | What to observe |
+REQ-5.3 in `applications/bookstack/requirements/requirements.yaml` states:
+
+> Description supports rich text, a cover is optional, and a default page template can be chosen.
+
+Test four description categories. Use your run suffix and set Tags to `testing` for each book.
+
+| Category | Book name | Description or action |
 |---|---|---|
-| 1 | Click **BookStack Demo** in the top navigation bar to return to the home page. | The **Course** book appears in **My Recently Viewed**. |
-| 2 | Click **Course** in **My Recently Viewed**. | The book details page opens normally. |
-| 3 | Click **Favorite** on the right-hand side. | The button changes to **Unfavorite**. |
-| 4 | Return to the home page. If the sections have not updated, press **F5** or click the browser’s refresh button. | Check **My Recently Viewed**. The book may disappear from there and appear in **My Most Viewed Favorites**. |
-| 5 | Open the book from the favorites section and click **Unfavorite**. | The button changes back to **Favorite**. |
-| 6 | Return to the home page. Refresh if needed. | The book reappears in **My Recently Viewed**. |
+| A: Single-line text | `Description-A-1125-01` | `Testing handbook` |
+| B: Multiline text | `Description-B-1125-01` | Enter `Testing objectives` on the first line and `Testing methods` on the second. |
+| C: Special characters | `Description-C-1125-01` | `Testing café résumé 📚 & < > " '` |
+| D: Rich text | `Description-D-1125-01` | Enter `Testing handbook` and look for a way to apply text formatting. |
 
-**Expected behavior:** Favoriting or unfavoriting a book should not remove it from recently viewed history.
+For A, B, and C:
 
-**Fault evidence:** The number of entries for the same book in **My Recently Viewed** changes from **1 → 0 → 1**.
+1. Click **Books → Create New Book**.
+2. Enter the corresponding name, description, and tags.
+3. Click **Save Book** and compare the displayed description with the input: A should retain the exact text, B should retain two separate lines, and C should retain every character literally.
+4. Reload, click **Edit**, and check that the content is retained.
+5. Click **Cancel** before creating the next book.
 
-When observing the result, focus on **My Recently Viewed**. Seeing the book under favorites does not show that recently viewed history is working correctly.
+For D:
+
+1. Open a new creation form and enter the name, description, and tags.
+2. Select `Testing` in Description. Inspect the field and surrounding form for formatting controls, menus, or instructions for entering formatted text.
+3. If a formatting method is available, apply a supported format, save, reload, and check that it is retained. In the supplied implementation, the form offers only a plain multiline textbox, so this operation cannot be completed. Capture the full form as evidence.
+4. Enter `Testing handbook` as plain text and click **Save Book** so that all four books exist for the next test.
+
+**Expected behavior:** Description supports rich text and preserves supported formatting after saving and reload.
+
+**Fault evidence:** The creation form provides only plain-text input and cannot perform the rich-text operation required by REQ-5.3.
+
+The requirement does not prescribe a particular formatting button or HTML input syntax. Displaying typed HTML tags literally is not sufficient evidence on its own.
 
 ## 4. Prepare for the White-Box Test
 
-1. Open the **Course** book.
-2. Click **Favorite**.
-3. Confirm the button changes to **Unfavorite**.
-4. Copy the full URL from the browser’s address bar again and save it as **First book URL**. This is the URL you will compare with the second creation.
+You now have ten initial books and four description test books. Stay logged in and do not favorite anything yet.
 
-**Do not create the second book yet.** First inspect the source code and decide what result you expect.
-
-Reading the code now does not change the black-box nature of the first test. The next test is a white-box test because you will use information from the source code to choose its inputs before running it.
-
-## 5. Your Task: Design the White-Box Test
-
-Open this file in your code editor:
+Open this file in your editor:
 
 ```text
 applications/bookstack/backend/src/slices/bookstack.ts
 ```
 
-Find the statement below. In the supplied version, it is on line 113. It is an **early-return branch**: if `existing` is true, the function returns that book immediately instead of continuing to create a book.
+Find `/api/home` and inspect these five blocks. The supplied version prints a terminal log after each block.
+
+| Block | Lines | Operation | Output |
+|---|---|---|---|
+| 1 | 186–198 | Collect viewing records | `allViewed` |
+| 2 | 199–203 | Sort and select at most ten records | `recentlyViewed` |
+| 3 | 205–216 | Collect favorites | `favorites` |
+| 4 | 217–222 | Select at most four favorites and build their identity set | `favoriteTop`, `favoriteKeys` |
+| 5 | 223–229 | Filter recently viewed records | `recentWithoutFavoriteDuplicates`, diagnostic `removedItems` |
+
+Use variable names and log numbers if line numbers change. Read the filtering statement:
 
 ```typescript
-if (existing) return existing;
+const recentWithoutFavoriteDuplicates = recentlyViewed.filter(
+  (item) => !favoriteKeys.has(`${item.type}:${item.id}`)
+);
 ```
 
-Inspect the database query immediately before that statement:
+The response returns this filtered list as `recentlyViewed`.
 
-```typescript
-const existing = db.prepare(
-  `SELECT * FROM books WHERE name = ? AND description = ? AND tags = ?
-   AND ((shelf_id IS NULL AND ? IS NULL) OR shelf_id = ?)
-   ORDER BY id ASC LIMIT 1`
-).get(name, description, tags, shelfId, shelfId);
+Reading code now does not change the black-box nature of the previous test. The next test uses the code to select inputs before execution.
 
-if (existing) return existing;
+## 5. Check the Limit and Identify the Coverage Gap
+
+1. Click **Books** and open `Initial-01-1125-01`, using your actual suffix.
+2. Click **BookStack Demo**, then press **F5**.
+3. Count the book entries inside **My Recently Viewed**. With fourteen visited books and no favorites, the supplied implementation should display ten.
+4. Repeat with `Initial-02-1125-01` and `Description-D-1125-01`. Check the ten-item count each time.
+5. Switch to the PowerShell window running the application. For the latest homepage request, inspect the consecutive logs `[BookStack white-box][1]` through `[5]`. In log `[2]`, check the selected list; in log `[5]`, check the counts and `removedItems`.
+
+With no favorites, log `[5]` should show:
+
+```text
+beforeCount: 10
+afterCount: 10
+removedItems: []
 ```
 
-The query looks for a book with the same **name**, **description**, **tags**, and **shelf**. Matching the name alone is not enough. Creating both books from the global **Books** page means neither book is assigned to a shelf, so both shelf values will be null.
+This capacity check can pass repeatedly without exercising removal of a favorited item. An incorrect deletion would still satisfy an assertion that the list contains **at most ten** entries. The requirements do not specify an eviction order or a tie-breaker for equal viewing times.
 
-This is a manual test: you will use the interface to enter the values and observe the result. You will not write or change code.
+The existing `REQ-7.1.spec.ts` tests visit a shelf and check that it appears in recently viewed items. They do not favorite that shelf. `REQ-8.1.spec.ts` and `REQ-8.2.spec.ts` test favorite behavior but do not check whether the favorited book remains in recently viewed items.
 
-Before creating the second book, write down your prediction:
+The capacity check above illustrates the gap; it is not an actual existing standard test. The missing assertion concerns **My Recently Viewed when `removedItems` is nonempty**. Favorite tests may execute that condition without checking its effect on this region.
 
-> **Expected behavior:** Two independent book creation operations should create two distinct book objects with different book IDs, even when all their field values are identical.
+## 6. Your Task: Design the White-Box Test
 
-The code gives you a hypothesis about what may happen. The expected behavior comes from the requirement that each separate creation operation should create a distinct book. Keep your expected result written down so you can compare it with what happens.
+**Do not click Favorite yet.** Use the code to choose inputs for both filter outcomes:
 
-## 6. Execute the White-Box Test: Create a Second Book
+| State | Target in `recentlyViewed`? | Target in `favoriteKeys`? | Code prediction |
+|---|---|---|---|
+| Not favorited | Yes | No | Keep the target |
+| Favorited and shown in homepage favorites | Yes | Yes | Remove the target |
 
-1. Click **Books** in the top navigation bar.
-2. Click **Create New Book** to open a new creation form. Do not edit the existing book.
-3. Enter the same values as before:
+Use **Description-A** as the target; its full name is `Description-A-1125-01` with your actual suffix. Keep the favorites collection empty until Section 7. Confirm that the target appears in log `[2]` before testing the filter. This separates filtering from the ten-item limit.
 
-   | Field | Value |
-   |---|---|
-   | Name | Course |
-   | Description | Testing |
-   | Tags | testing |
+Write down your expectation:
 
-4. Click **Save Book**.
-5. Compare the full URL in the browser’s address bar with the saved **First book URL**. Check the favorite button as well.
-6. Return to **Books** and check how many **Course** entries appear.
+> **Expected behavior:** A book present in recently viewed items should remain there when favorited. It may also appear in My Most Viewed Favorites.
 
-**Actual observations:**
+REQ-7.1 requires visits to be recorded and reopened; REQ-8.2 describes homepage favorites. They do not require the two regions to be mutually exclusive.
 
-- The URL is identical to the **First book URL**.
-- The page displays **Unfavorite**, even though you just completed a new creation operation.
-- The Books page shows only one **Course** entry.
+## 7. Execute the White-Box Test: Favorite the Viewed Book
+
+1. Open **Description-A** from **Books** and save its full URL.
+2. Return home and confirm that it appears in **My Recently Viewed**. Check log `[2]` if necessary.
+   Do not continue unless this baseline holds. Reopen the saved URL, return home, and refresh to check again; if it still fails, record that result separately rather than attributing it to the favorite filter.
+3. Perform the following steps:
+
+   | Step | Action | What to observe |
+   |---|---|---|
+   | 1 | Open the target and click **Favorite**. | The button changes to **Unfavorite**. |
+   | 2 | Return home and refresh if needed. | The target appears in **My Most Viewed Favorites** but disappears from **My Recently Viewed**. |
+   | 3 | Inspect logs `[1]` through `[5]` in PowerShell. | The target survives viewing-record selection, enters the favorite set, and is then listed in `removedItems`. |
+   | 4 | Open the target from favorites, verify its URL, and click **Unfavorite**. | The button changes back to **Favorite**. |
+   | 5 | Return home and refresh if needed. | The target reappears in **My Recently Viewed**; `removedItems` returns to `[]`. |
+
+When the target is favorited, log `[5]` should contain values similar to these:
+
+```text
+beforeCount: 10
+afterCount: 9
+recentWithoutFavoriteDuplicates: [the nine retained records]
+removedItems: [{ type: "book", id: ..., name: "Description-A-1125-01", ... }]
+```
+
+This is an abbreviated example; actual IDs and fields vary. `removedItems` is a terminal diagnostic, not a new response field.
+
+**Fault evidence:** The target's entry count in **My Recently Viewed** changes **1 → 0 → 1** as it is favorited and unfavorited. Log `[5]` identifies the record removed by the filter.
+
+Compare the result with your written expectation. Blocks 1 and 2 retain the viewing record; the incorrect removal occurs in Block 5.
 
 Discuss these questions:
 
-- Why is the second book already marked as a favorite?
-- Was favorite state shared between two books, or was a second book never created?
-- How do the URL and the number of entries help you decide?
+- Why does checking only the ten-item limit miss this fault?
+- What input makes `removedItems` nonempty?
+- Why should appearing in favorites not remove a recently viewed entry?
 
-**Fault evidence:** Two independent creation operations resulted in only one book object, rather than two distinct books.
+This test examines the five related processing blocks and both keep/remove outcomes of the filter. It does not claim full path coverage of `/api/home`.
 
-This was not a double-click on **Save Book** or a network retry. You opened a separate creation form, entered the values, and saved it as a second operation.
+## 8. End the Demonstration
 
-Compare the actual observations with your written prediction. The matching URL, existing favorite state, and single **Course** entry are consistent with the code-guided hypothesis that the early-return branch returned the existing book.
-
-## 7. End the Demonstration
-
-Return to the PowerShell window running BookStack and press **Ctrl+C** to stop the application.
+Save your observations and screenshots. Return to the PowerShell window running BookStack and press **Ctrl+C** to stop the application.
