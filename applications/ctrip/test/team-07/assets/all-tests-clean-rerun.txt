@@ -1,0 +1,204 @@
+
+Running 6 tests using 1 worker
+
+(node:72964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 REQ-1.13.spec.ts:19:1 › REQ-1.13: Reject an SMS code sent before logout (5.9s)
+(node:72978) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 REQ-1.5.spec.ts:20:1 › REQ-1.5: Decline registration reached through Free registration (5.4s)
+(node:73010) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 REQ-1.6.spec.ts:20:1 › REQ-1.6: Reject a code sent only in a previous registration attempt (5.7s)
+(node:73034) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 REQ-3.5.spec.ts:21:1 › REQ-3.5: Place invalid-contact feedback in Contact information (6.0s)
+(node:73064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  5 REQ-4.2.spec.ts:19:1 › REQ-4.2: Preserve the order countdown when filtering orders (439ms)
+(node:73069) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  6 REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers (6.8s)
+
+
+  1) REQ-1.13.spec.ts:19:1 › REQ-1.13: Reject an SMS code sent before logout ───────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('alert')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+       at ../baseline/helpers.ts:23
+
+      21 |   .or(s.getByRole('row', { name: /^Record / })).or(s.getByRole('group', { name: /^Record / }));
+      22 | export const flight = (page: Page, number: string) => region(page, 'Flight list').getByRole('listitem', { name: `Flight ${number}`, exact: true });
+    > 23 | export const visible = async (l: Locator) => { await expect(l).toBeVisible(); };
+         |                                                                ^
+      24 | export const heading = async (page: Page, name: string) => visible(page.getByRole('heading', { name, exact: true }));
+      25 | export const textVisible = async (s: Scope, text: string) => {
+      26 |   // Text may repeat within a record (for example route city and bus stop).
+        at visible (/Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/baseline/helpers.ts:23:64)
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-1.13.spec.ts:44:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.13-REQ-1-13-Reject-an-SMS-code-sent-before-logout/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.13-REQ-1-13-Reject-an-SMS-code-sent-before-logout/error-context.md
+
+  2) REQ-1.5.spec.ts:20:1 › REQ-1.5: Decline registration reached through Free registration ────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Ctrip Travel', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Ctrip Travel', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Ctrip Travel', exact: true })
+
+
+       at ../baseline/helpers.ts:23
+
+      21 |   .or(s.getByRole('row', { name: /^Record / })).or(s.getByRole('group', { name: /^Record / }));
+      22 | export const flight = (page: Page, number: string) => region(page, 'Flight list').getByRole('listitem', { name: `Flight ${number}`, exact: true });
+    > 23 | export const visible = async (l: Locator) => { await expect(l).toBeVisible(); };
+         |                                                                ^
+      24 | export const heading = async (page: Page, name: string) => visible(page.getByRole('heading', { name, exact: true }));
+      25 | export const textVisible = async (s: Scope, text: string) => {
+      26 |   // Text may repeat within a record (for example route city and bus stop).
+        at visible (/Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/baseline/helpers.ts:23:64)
+        at heading (/Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/baseline/helpers.ts:24:60)
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-1.5.spec.ts:30:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.5-REQ-1-5-Decline-re-be7e8-d-through-Free-registration/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.5-REQ-1-5-Decline-re-be7e8-d-through-Free-registration/error-context.md
+
+  3) REQ-1.6.spec.ts:20:1 › REQ-1.6: Reject a code sent only in a previous registration attempt ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('alert')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('alert')
+
+
+       at ../baseline/helpers.ts:23
+
+      21 |   .or(s.getByRole('row', { name: /^Record / })).or(s.getByRole('group', { name: /^Record / }));
+      22 | export const flight = (page: Page, number: string) => region(page, 'Flight list').getByRole('listitem', { name: `Flight ${number}`, exact: true });
+    > 23 | export const visible = async (l: Locator) => { await expect(l).toBeVisible(); };
+         |                                                                ^
+      24 | export const heading = async (page: Page, name: string) => visible(page.getByRole('heading', { name, exact: true }));
+      25 | export const textVisible = async (s: Scope, text: string) => {
+      26 |   // Text may repeat within a record (for example route city and bus stop).
+        at visible (/Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/baseline/helpers.ts:23:64)
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-1.6.spec.ts:38:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.6-REQ-1-6-Reject-a-c-4756a-evious-registration-attempt/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-1.6-REQ-1-6-Reject-a-c-4756a-evious-registration-attempt/error-context.md
+
+  4) REQ-3.5.spec.ts:21:1 › REQ-3.5: Place invalid-contact feedback in Contact information ─────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Contact information', exact: true }).getByRole('alert')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('region', { name: 'Contact information', exact: true }).getByRole('alert') with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Contact information', exact: true }).getByRole('alert')
+
+
+      35 |   await expect(page.getByRole('heading', { name: 'Payment', exact: true })).toHaveCount(0);
+      36 |
+    > 37 |   await expect(region(page, 'Contact information').getByRole('alert')).toBeVisible();
+         |                                                                        ^
+      38 | });
+      39 |
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-3.5.spec.ts:37:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-3.5-REQ-3-5-Place-inva-bec7b-back-in-Contact-information/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-3.5-REQ-3-5-Place-inva-bec7b-back-in-Contact-information/error-context.md
+
+  5) REQ-4.2.spec.ts:19:1 › REQ-4.2: Preserve the order countdown when filtering orders ────────────
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 86374
+    Received:    86375
+
+      37 |   // Filtering must not restore time already elapsed before the tab change.
+      38 |   const afterFilter = await countdownSeconds(timer);
+    > 39 |   expect(afterFilter).toBeLessThanOrEqual(elapsed);
+         |                       ^
+      40 | });
+      41 |
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-4.2.spec.ts:39:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-4.2-REQ-4-2-Preserve-t-410e8-tdown-when-filtering-orders/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-4.2-REQ-4-2-Preserve-t-410e8-tdown-when-filtering-orders/error-context.md
+
+  6) REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers ───────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719960', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719960', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719960', { exact: true })
+
+
+      46 |
+      47 |   // The newly paid order has no voucher application and must be eligible.
+    > 48 |   await expect(pendingVouchers.getByText(orderNumber, { exact: true })).toBeVisible();
+         |                                                                         ^
+      49 | });
+      50 |
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-8.3.spec.ts:48:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../playwright-runner/all-tests-clean-rerun/REQ-8.3-REQ-8-3-Show-a-newly-paid-order-in-pending-vouchers/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../playwright-runner/all-tests-clean-rerun/REQ-8.3-REQ-8-3-Show-a-newly-paid-order-in-pending-vouchers/error-context.md
+
+  6 failed
+    REQ-1.13.spec.ts:19:1 › REQ-1.13: Reject an SMS code sent before logout ────────────────────────
+    REQ-1.5.spec.ts:20:1 › REQ-1.5: Decline registration reached through Free registration ─────────
+    REQ-1.6.spec.ts:20:1 › REQ-1.6: Reject a code sent only in a previous registration attempt ─────
+    REQ-3.5.spec.ts:21:1 › REQ-3.5: Place invalid-contact feedback in Contact information ──────────
+    REQ-4.2.spec.ts:19:1 › REQ-4.2: Preserve the order countdown when filtering orders ─────────────
+    REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers ────────────────────

@@ -1,0 +1,38 @@
+
+Running 1 test using 1 worker
+
+(node:63433) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 ../course-software-testing-20261126/applications/ctrip/test/team-07/REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers (7.0s)
+
+
+  1) ../course-software-testing-20261126/applications/ctrip/test/team-07/REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719293', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719293', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Pending vouchers', exact: true }).getByText('CTRIP20260719293', { exact: true })
+
+
+      46 |
+      47 |   // The newly paid order has no voucher application and must be eligible.
+    > 48 |   await expect(pendingVouchers.getByText(orderNumber, { exact: true })).toBeVisible();
+         |                                                                         ^
+      49 | });
+      50 |
+        at /Users/junjie/Desktop/26FA-Course/CS4810J/.assignment-inspect/course-software-testing-20261126/applications/ctrip/test/team-07/REQ-8.3.spec.ts:48:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/REQ-8.3-REQ-8-3-Show-a-newly-paid-order-in-pending-vouchers/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/REQ-8.3-REQ-8-3-Show-a-newly-paid-order-in-pending-vouchers/error-context.md
+
+  1 failed
+    ../course-software-testing-20261126/applications/ctrip/test/team-07/REQ-8.3.spec.ts:22:1 › REQ-8.3: Show a newly paid order in pending vouchers
